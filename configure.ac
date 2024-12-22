@@ -204,23 +204,55 @@ AC_MSG_RESULT([$enable_debug_logging])
 PKG_PROG_PKG_CONFIG
 AS_IF([test "x$PKG_CONFIG" != "x"], [PKG_CONFIG="$PKG_CONFIG --static"])
 
-AC_MSG_CHECKING([whether to leverage OpenSSL crypto])
-AC_ARG_ENABLE([openssl],
-  [AS_HELP_STRING([--enable-openssl], [compile in OpenSSL crypto engine])],
-  [], [enable_openssl=no])
-AC_MSG_RESULT([$enable_openssl])
+# Define available crypto libraries as a array
+CRYPTO_LIBRARY_OPTIONS=("none" "openssl" "wolfssl" "mbedtls" "nss")
 
-AC_MSG_CHECKING([whether to leverage wolfSSL crypto])
-AC_ARG_ENABLE([wolfssl],
-  [AS_HELP_STRING([--enable-wolfssl], [compile in wolfSSL crypto engine])],
-  [], [enable_wolfssl=no])
-AC_MSG_RESULT([$enable_wolfssl])
+# Get user input for the crypto library
+AC_ARG_WITH([crypto-library],
+  [AS_HELP_STRING([--with-crypto-library=NAME], [Select the crypto library to use: none, openssl, wolfssl, mbedtls, nss])],
+  [case "${withval}" in
+    none|openssl|wolfssl|mbedtls|nss)
+      CRYPTO_LIBRARY="${withval}";;
+    *)
+      AC_MSG_ERROR([Invalid crypto library: ${withval}])
+      ;;
+  esac],
+  [CRYPTO_LIBRARY="none"]) # Default to OpenSSL
 
-AC_MSG_CHECKING([whether to leverage NSS crypto])
-AC_ARG_ENABLE([nss],
-  [AS_HELP_STRING([--enable-nss], [compile in NSS crypto engine])],
-  [], [enable_nss=no])
-AC_MSG_RESULT([$enable_nss])
+# Set flags and messages based on the selected library
+case "${CRYPTO_LIBRARY}" in
+  openssl)
+    #AC_DEFINE([ENABLE_OPENSSL], [1])
+    enable_openssl="yes"
+    AC_MSG_RESULT([Using OpenSSL crypto library])
+    ;;
+  wolfssl)
+    enable_wolfssl="yes"
+    #AC_DEFINE([ENABLE_WOLFSSL], [1])
+    AC_MSG_RESULT([Using wolfSSL crypto library])
+    ;;
+  nss)
+    #AC_DEFINE([ENABLE_NSS], [1])
+    enable_nss="yes"
+    AC_MSG_RESULT([Using NSS crypto library])
+    ;;
+  mbedtls)
+    #AC_DEFINE([ENABLE_MBEDTLS], [1])
+    enable_mbedtls="yes"
+    AC_MSG_RESULT([Using mbedtls crypto library])
+    ;;
+  none)
+    AC_MSG_RESULT([Using internal crypto library])
+    ;;
+  *)
+    AC_MSG_ERROR([Invalid CRYPTO_LIBRARY=${CRYPTO_LIBRARY}])
+    ;;
+esac
+
+AC_ARG_ENABLE([crypto-library-kdf],
+   [AS_HELP_STRING([--enable-crypto-library-kdf], [Enable wolfSSL or OpenSSL KDF algorithm])],
+   [], [crypto_library_kdf=no])
+AC_MSG_RESULT([$crypto_library_kdf])
 
 if test "$enable_openssl" = "yes"; then
    AC_MSG_CHECKING([for user specified OpenSSL directory])
@@ -272,11 +304,7 @@ if test "$enable_openssl" = "yes"; then
    AC_SUBST([USE_EXTERNAL_CRYPTO], [1])
 
    AC_MSG_CHECKING([whether to leverage OpenSSL KDF algorithm])
-   AC_ARG_ENABLE([openssl-kdf],
-      [AS_HELP_STRING([--enable-openssl-kdf], [Use OpenSSL KDF algorithm])],
-      [], [enable_openssl_kdf=no])
-   AC_MSG_RESULT([$enable_openssl_kdf])
-   if test "$enable_openssl_kdf" = "yes"; then
+   if test "$crypto_library_kdf" = "yes"; then
      AC_SEARCH_LIBS([kdf_srtp], [crypto],
        [], [AC_MSG_FAILURE([can't find openssl KDF lib])])
      AC_DEFINE([OPENSSL_KDF], [1], [Define this to use OpenSSL KDF for SRTP.])
@@ -307,10 +335,11 @@ elif test "$enable_wolfssl" = "yes"; then
    HMAC_OBJS=crypto/hash/hmac_wssl.o
    AC_SUBST([USE_EXTERNAL_CRYPTO], [1])
 
-   AC_MSG_CHECKING([whether to leverage wolfSSL KDF algorithm])
-   AC_SEARCH_LIBS([wc_SRTCP_KDF], [wolfssl],
-     [], [AC_MSG_FAILURE([can't find wolfssl KDF lib])])
-   AC_DEFINE([WOLFSSL_KDF], [1], [Define this to use wolfSSL KDF for SRTP.])
+   if test "$crypto_library_kdf" = "yes"; then
+     AC_SEARCH_LIBS([wc_SRTCP_KDF], [wolfssl],
+       [], [AC_MSG_FAILURE([can't find wolfssl KDF lib])])
+     AC_DEFINE([WOLFSSL_KDF], [1], [Define this to use wolfSSL KDF for SRTP.])
+   fi
 elif test "$enable_nss" = "yes"; then
    AC_MSG_CHECKING([for user specified NSS directory])
    AC_ARG_WITH([nss-dir],
