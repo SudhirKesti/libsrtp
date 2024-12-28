@@ -2,9 +2,9 @@ name: AutoTools CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ config_fixes ]
   pull_request:
-    branches: [ main ]
+    branches: [ config_fixes ]
 
 jobs:
   build:

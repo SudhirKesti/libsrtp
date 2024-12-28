@@ -2,11 +2,9 @@ name: CMake CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ config_fixes ]
   pull_request:
     branches: [ main ]
-  schedule:
-    - cron: '20 4 * * 1'
 
 jobs:
   build:
