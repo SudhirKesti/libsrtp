@@ -204,9 +204,6 @@ AC_MSG_RESULT([$enable_debug_logging])
 PKG_PROG_PKG_CONFIG
 AS_IF([test "x$PKG_CONFIG" != "x"], [PKG_CONFIG="$PKG_CONFIG --static"])
 
-# Define available crypto libraries as a array
-CRYPTO_LIBRARY_OPTIONS=("none" "openssl" "wolfssl" "mbedtls" "nss")
-
 # Get user input for the crypto library
 AC_ARG_WITH([crypto-library],
   [AS_HELP_STRING([--with-crypto-library=NAME], [Select the crypto library to use: none, openssl, wolfssl, mbedtls, nss])],
@@ -218,7 +215,7 @@ AC_ARG_WITH([crypto-library],
       ;;
   esac],
   [CRYPTO_LIBRARY="none"]) # Default to OpenSSL
-
+AC_MSG_RESULT([$CRYPTO_LIBRARY])
 # Set flags and messages based on the selected library
 case "${CRYPTO_LIBRARY}" in
   openssl)
