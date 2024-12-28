@@ -7,7 +7,7 @@ if test "x$CFLAGS" = "x"; then
    dnl Default value for CFLAGS if not specified.
    EMPTY_CFLAGS="yes"
 fi
-
+AC_PREREQ([automake], [1.16.4]) 
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
