@@ -7,7 +7,7 @@ if test "x$CFLAGS" = "x"; then
    dnl Default value for CFLAGS if not specified.
    EMPTY_CFLAGS="yes"
 fi
-AC_PREREQ([automake], [1.16.4]) 
+
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CPP
@@ -15,7 +15,7 @@ AC_PROG_CXX
 AC_ARG_VAR(
   [EXTRA_CFLAGS],
   [C compiler flags appended to the regular C compiler flags instead of overriding them])
-AM_PROG_AR
+dnl AM_PROG_AR
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_SED
