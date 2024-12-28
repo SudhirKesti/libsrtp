@@ -78,6 +78,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Configure
+      run: ${{env.configure-env}} autoreconf -i -f
       run: ${{env.configure-env}} EXTRA_CFLAGS=-Werror ./configure ${{ matrix.configure-crypto-enable}}
 
     - name: Build
