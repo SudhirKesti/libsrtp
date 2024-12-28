@@ -15,7 +15,7 @@ AC_PROG_CXX
 AC_ARG_VAR(
   [EXTRA_CFLAGS],
   [C compiler flags appended to the regular C compiler flags instead of overriding them])
-dnl AM_PROG_AR
+AM_PROG_AR
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_SED

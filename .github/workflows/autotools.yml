@@ -30,7 +30,12 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install valgrind autoconf automake binutils libtool pkg-config
+        sudo apt-get install valgrind autoconf automake binutils libtool pkg-config build-essential
+
+    - name: Setup macOS
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install autoconf automake libtool
 
     - name: Setup Ubuntu wolfSSL
       if: matrix.os == 'ubuntu-latest' && matrix.crypto == 'wolfssl'
