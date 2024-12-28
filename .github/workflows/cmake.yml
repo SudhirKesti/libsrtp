@@ -28,13 +28,13 @@ jobs:
             crypto: openssl3
         include:
           - crypto: internal
-            cmake-crypto-enable: ""
+            cmake-crypto-enable: "-DCRYPTO_LIBRARY=none"
           - crypto: openssl
-            cmake-crypto-enable: "-DCRYPTO_LIBRARY=openssl"
+            cmake-crypto-enable: "-DCRYPTO_LIBRARY=openssl3"
           - crypto: openssl3
             cmake-crypto-enable: "-DCRYPTO_LIBRARY=openssl"
           - crypto: wolfssl
-            cmake-crypto-enable: "-DCRYPTO_LIBRARY=wolfssl"
+            cmake-crypto-enable: "-DCRYPTO_LIBRARY=wolfssl -DCRYPTO_LIBRARY_KDF=ON"
           - crypto: nss
             cmake-crypto-enable: "-DCRYPTO_LIBRARY=nss"
           - crypto: mbedtls
