@@ -30,7 +30,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install valgrind autoconf automake
+        sudo apt-get install valgrind autoconf automake binutils libtool pkg-config
 
     - name: Setup Ubuntu wolfSSL
       if: matrix.os == 'ubuntu-latest' && matrix.crypto == 'wolfssl'
